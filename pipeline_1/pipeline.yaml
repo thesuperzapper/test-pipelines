@@ -1,0 +1,158 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: pipeline-1-
+  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.22, pipelines.kubeflow.org/pipeline_compilation_time: '2023-06-05T13:39:22.219558',
+    pipelines.kubeflow.org/pipeline_spec: '{"description": "pipeline_1 description",
+      "name": "pipeline_1"}'}
+  labels: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.22}
+spec:
+  entrypoint: pipeline-1
+  templates:
+  - name: pipeline-1
+    dag:
+      tasks:
+      - {name: step-1, template: step-1}
+  - name: step-1
+    container:
+      args: [--text, /tmp/inputs/text/data]
+      command:
+      - sh
+      - -ec
+      - |
+        program_path=$(mktemp)
+        printf "%s" "$0" > "$program_path"
+        python3 -u "$program_path" "$@"
+      - |
+        def step_1(text):
+            print(text)
+
+        import argparse
+        _parser = argparse.ArgumentParser(prog='Step 1', description='')
+        _parser.add_argument("--text", dest="text", type=str, required=True, default=argparse.SUPPRESS)
+        _parsed_args = vars(_parser.parse_args())
+
+        _outputs = step_1(**_parsed_args)
+      image: python:3.10
+    inputs:
+      artifacts:
+      - name: text
+        path: /tmp/inputs/text/data
+        raw:
+          data: |
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+            1
+    metadata:
+      labels:
+        pipelines.kubeflow.org/kfp_sdk_version: 1.8.22
+        pipelines.kubeflow.org/pipeline-sdk-type: kfp
+        pipelines.kubeflow.org/enable_caching: "true"
+      annotations: {pipelines.kubeflow.org/component_spec: '{"implementation": {"container":
+          {"args": ["--text", {"inputPath": "text"}], "command": ["sh", "-ec", "program_path=$(mktemp)\nprintf
+          \"%s\" \"$0\" > \"$program_path\"\npython3 -u \"$program_path\" \"$@\"\n",
+          "def step_1(text):\n    print(text)\n\nimport argparse\n_parser = argparse.ArgumentParser(prog=''Step
+          1'', description='''')\n_parser.add_argument(\"--text\", dest=\"text\",
+          type=str, required=True, default=argparse.SUPPRESS)\n_parsed_args = vars(_parser.parse_args())\n\n_outputs
+          = step_1(**_parsed_args)\n"], "image": "python:3.10"}}, "inputs": [{"name":
+          "text", "type": "String"}], "name": "Step 1"}', pipelines.kubeflow.org/component_ref: '{}'}
+  arguments:
+    parameters: []
+  serviceAccountName: pipeline-runner
