@@ -34,6 +34,26 @@ def main():
         pipeline_func=pipeline_1, package_path="pipeline_v1.yaml"
     )
 
+    # from kfp_utils.client_manager import KFPClientManager
+    #
+    # kfp_client_manager = KFPClientManager(
+    #    api_url="https://deploykf.example.com:8443/pipeline",
+    #    dex_username="user1@example.com",
+    #    dex_password="user1",
+    #    dex_auth_type="local",
+    #    skip_tls_verify=True,
+    # )
+    #
+    # kfp_client = kfp_client_manager.get_kfp_client()
+    #
+    # # run the pipeline
+    # kfp_client.create_run_from_pipeline_package(
+    #    pipeline_file="pipeline_v1.yaml",
+    #    arguments={},
+    #    namespace="team-1",
+    #    experiment_name="test"
+    # )
+
 
 if __name__ == "__main__":
     main()
