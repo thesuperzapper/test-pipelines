@@ -13,7 +13,13 @@ if int(kfp_version.split(".")[0]) != 2:
 # Pipeline
 #########################################################################################
 @dsl.component(base_image="python:3.10")
-def step_1(text: str, output_file: dsl.Output[dsl.Artifact]):
+def step_1(
+    intro_message: str,
+    # TODO: figure out how to use dsl.InputPath to pass large strings
+    text: str,
+    output_file: dsl.Output[dsl.Artifact],
+):
+    print(intro_message)
     print(text)
 
     with open(output_file.path, "w") as f:
@@ -21,8 +27,8 @@ def step_1(text: str, output_file: dsl.Output[dsl.Artifact]):
 
 
 @dsl.pipeline(name="pipeline-1", description="pipeline-1 description")
-def pipeline_1():
-    step_1(text="1\n" * 100)
+def pipeline_1(intro_message: str):
+    step_1(intro_message=intro_message, text="1\n" * 100)
 
 
 #########################################################################################

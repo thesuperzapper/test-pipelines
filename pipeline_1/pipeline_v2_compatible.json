@@ -5,6 +5,9 @@
         "executorLabel": "exec-step-1",
         "inputDefinitions": {
           "parameters": {
+            "intro_message": {
+              "type": "STRING"
+            },
             "text": {
               "type": "STRING"
             }
@@ -39,7 +42,7 @@
               "sh",
               "-ec",
               "program_path=$(mktemp -d)\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\npython3 -m kfp.v2.components.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
-              "\nimport kfp\nfrom kfp.v2 import dsl\nfrom kfp.v2.dsl import *\nfrom typing import *\n\ndef step_1(text: str, output_file: dsl.Output[dsl.Artifact]):\n    print(text)\n\n    with open(output_file.path, \"w\") as f:\n        f.write(text)\n\n"
+              "\nimport kfp\nfrom kfp.v2 import dsl\nfrom kfp.v2.dsl import *\nfrom typing import *\n\ndef step_1(\n    intro_message: str,\n    # TODO: figure out how to use dsl.InputPath to pass large strings\n    text: str,\n    output_file: dsl.Output[dsl.Artifact],\n):\n    print(intro_message)\n    print(text)\n\n    with open(output_file.path, \"w\") as f:\n        f.write(text)\n\n"
             ],
             "image": "python:3.10"
           }
@@ -61,6 +64,9 @@
             },
             "inputs": {
               "parameters": {
+                "intro_message": {
+                  "componentInputParameter": "intro_message"
+                },
                 "text": {
                   "runtimeValue": {
                     "constantValue": {
@@ -73,6 +79,13 @@
             "taskInfo": {
               "name": "step-1"
             }
+          }
+        }
+      },
+      "inputDefinitions": {
+        "parameters": {
+          "intro_message": {
+            "type": "STRING"
           }
         }
       }

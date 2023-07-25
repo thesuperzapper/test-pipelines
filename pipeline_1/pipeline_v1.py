@@ -12,7 +12,8 @@ if int(kfp_version.split(".")[0]) != 1:
 #########################################################################################
 # Pipeline
 #########################################################################################
-def step_1(text: components.InputPath(str)):
+def step_1(intro_message: str, text: components.InputPath(str)):
+    print(intro_message)
     print(text)
 
 
@@ -22,8 +23,8 @@ step_1__op = components.create_component_from_func(
 
 
 @dsl.pipeline(name="pipeline_1", description="pipeline_1 description")
-def pipeline_1():
-    step_1__op(text="1\n" * 100)
+def pipeline_1(intro_message: str):
+    step_1__op(intro_message=intro_message, text="1\n" * 100)
 
 
 #########################################################################################
@@ -49,7 +50,7 @@ def main():
     # # run the pipeline
     # kfp_client.create_run_from_pipeline_package(
     #    pipeline_file="pipeline_v1.yaml",
-    #    arguments={},
+    #    arguments={"intro_message": "Hello World!"},
     #    namespace="team-1",
     #    experiment_name="test"
     # )

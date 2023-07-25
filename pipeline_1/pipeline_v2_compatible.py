@@ -13,7 +13,13 @@ if int(kfp_version.split(".")[0]) != 1:
 # Pipeline
 #########################################################################################
 @dsl.component(base_image="python:3.10")
-def step_1(text: str, output_file: dsl.Output[dsl.Artifact]):
+def step_1(
+    intro_message: str,
+    # TODO: figure out how to use dsl.InputPath to pass large strings
+    text: str,
+    output_file: dsl.Output[dsl.Artifact],
+):
+    print(intro_message)
     print(text)
 
     with open(output_file.path, "w") as f:
@@ -21,8 +27,8 @@ def step_1(text: str, output_file: dsl.Output[dsl.Artifact]):
 
 
 @dsl.pipeline(name="pipeline-1", description="pipeline-1 description")
-def pipeline_1():
-    step_1(text="1\n" * 100)
+def pipeline_1(intro_message: str):
+    step_1(intro_message=intro_message, text="1\n" * 100)
 
 
 #########################################################################################
@@ -37,11 +43,11 @@ def main():
     # import kfp
     #
     # kfp_client_manager = KFPClientManager(
-    #    api_url="https://deploykf.example.com:8443/pipeline",
-    #    dex_username="user1@example.com",
-    #    dex_password="user1",
-    #    dex_auth_type="local",
-    #    skip_tls_verify=True,
+    #     api_url="https://deploykf.example.com:8443/pipeline",
+    #     dex_username="user1@example.com",
+    #     dex_password="user1",
+    #     dex_auth_type="local",
+    #     skip_tls_verify=True,
     # )
     #
     # kfp_client = kfp_client_manager.get_kfp_client()
@@ -49,11 +55,11 @@ def main():
     # # run the pipeline in v2 compatibility mode
     # # NOTE: we are running the function, not the compiled pipeline JSON
     # kfp_client.create_run_from_pipeline_func(
-    #    pipeline_func=pipeline_1,
-    #    arguments={},
-    #    mode=kfp.dsl.PipelineExecutionMode.V2_COMPATIBLE,
-    #    namespace="team-1",
-    #    experiment_name="test-v2"
+    #     pipeline_func=pipeline_1,
+    #     arguments={"intro_message": "Hello World!"},
+    #     mode=kfp.dsl.PipelineExecutionMode.V2_COMPATIBLE,
+    #     namespace="team-1",
+    #     experiment_name="test-v2",
     # )
 
 

@@ -1,11 +1,15 @@
 # PIPELINE DEFINITION
 # Name: pipeline-1
 # Description: pipeline-1 description
+# Inputs:
+#    intro_message: str
 components:
   comp-step-1:
     executorLabel: exec-step-1
     inputDefinitions:
       parameters:
+        intro_message:
+          parameterType: STRING
         text:
           parameterType: STRING
     outputDefinitions:
@@ -40,9 +44,10 @@ deploymentSpec:
 
           '
         - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
-          \ *\n\ndef step_1(text: str, output_file: dsl.Output[dsl.Artifact]):\n \
-          \   print(text)\n\n    with open(output_file.path, \"w\") as f:\n      \
-          \  f.write(text)\n\n"
+          \ *\n\ndef step_1(\n    intro_message: str,\n    # TODO: figure out how\
+          \ to use dsl.InputPath\n    text: str,\n    output_file: dsl.Output[dsl.Artifact],\n\
+          ):\n    print(intro_message)\n    print(text)\n\n    with open(output_file.path,\
+          \ \"w\") as f:\n        f.write(text)\n\n"
         image: python:3.10
 pipelineInfo:
   description: pipeline-1 description
@@ -57,6 +62,8 @@ root:
           name: comp-step-1
         inputs:
           parameters:
+            intro_message:
+              componentInputParameter: intro_message
             text:
               runtimeValue:
                 constant: '1
@@ -262,5 +269,9 @@ root:
                   '
         taskInfo:
           name: step-1
+  inputDefinitions:
+    parameters:
+      intro_message:
+        parameterType: STRING
 schemaVersion: 2.1.0
 sdkVersion: kfp-2.0.1
