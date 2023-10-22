@@ -50,7 +50,7 @@ def main():
     #     skip_tls_verify=True,
     # )
     #
-    # kfp_client = kfp_client_manager.get_kfp_client()
+    # kfp_client = kfp_client_manager.create_kfp_client()
     #
     # # run the pipeline in v2 compatibility mode
     # # NOTE: we are running the function, not the compiled pipeline JSON

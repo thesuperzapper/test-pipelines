@@ -129,6 +129,6 @@ class KFPClientManager:
             cookies=session_cookies,
         )
 
-    def get_kfp_client(self) -> kfp.Client:
+    def create_kfp_client(self) -> kfp.Client:
         """Get a newly authenticated Kubeflow Pipelines client."""
         return self._create_kfp_client()

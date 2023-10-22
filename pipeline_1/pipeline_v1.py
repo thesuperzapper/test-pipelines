@@ -45,7 +45,7 @@ def main():
     #    skip_tls_verify=True,
     # )
     #
-    # kfp_client = kfp_client_manager.get_kfp_client()
+    # kfp_client = kfp_client_manager.create_kfp_client()
     #
     # # run the pipeline
     # kfp_client.create_run_from_pipeline_package(
