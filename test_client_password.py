@@ -3,11 +3,9 @@ from kfp_utils.client_manager import KFPClientManager
 # initialize a KFPClientManager
 kfp_client_manager = KFPClientManager(
     api_url="https://deploykf.example.com:8443/pipeline",
-
     dex_username="user1@example.com",
     dex_password="user1",
     dex_auth_type="local",
-
     skip_tls_verify=True,
 )
 
@@ -17,5 +15,4 @@ kfp_client = kfp_client_manager.create_kfp_client()
 
 # test the client by listing experiments
 experiments = kfp_client.list_experiments(namespace="team-1")
-
 print(experiments)
