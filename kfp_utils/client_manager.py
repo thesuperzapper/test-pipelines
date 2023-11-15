@@ -35,6 +35,10 @@ class KFPClientManager:
         self._dex_auth_type = dex_auth_type
         self._client = None
 
+        # disable SSL verification, if requested
+        if self._skip_tls_verify:
+            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
         # ensure `dex_default_auth_type` is valid
         if self._dex_auth_type not in ["ldap", "local"]:
             raise ValueError(
@@ -50,13 +54,10 @@ class KFPClientManager:
         # use a persistent session (for cookies)
         s = requests.Session()
 
-        # disable SSL verification, if requested
-        if self._skip_tls_verify:
-            s.verify = False
-            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
         # GET the api_url, which should redirect to Dex
-        resp = s.get(self._api_url, allow_redirects=True)
+        resp = s.get(
+            self._api_url, allow_redirects=True, verify=not self._skip_tls_verify
+        )
         if resp.status_code != 200:
             raise RuntimeError(
                 f"HTTP status code '{resp.status_code}' for GET against: {self._api_url}"
@@ -79,7 +80,9 @@ class KFPClientManager:
             dex_login_url = url_obj.geturl()
         else:
             # otherwise, we need to follow a redirect to the login page
-            resp = s.get(url_obj.geturl(), allow_redirects=True)
+            resp = s.get(
+                url_obj.geturl(), allow_redirects=True, verify=not self._skip_tls_verify
+            )
             if resp.status_code != 200:
                 raise RuntimeError(
                     f"HTTP status code '{resp.status_code}' for GET against: {url_obj.geturl()}"
@@ -91,6 +94,7 @@ class KFPClientManager:
             dex_login_url,
             data={"login": self._dex_username, "password": self._dex_password},
             allow_redirects=True,
+            verify=not self._skip_tls_verify,
         )
         if resp.status_code != 200:
             raise RuntimeError(
