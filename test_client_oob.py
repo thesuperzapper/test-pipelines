@@ -2,10 +2,10 @@ import kfp
 
 from kfp_utils.credentials_oob import DeployKFCredentialsOutOfBand
 
-# configs (default)
+# CONFIGS (default)
 issuer_url = "https://deploykf.example.com:8443/dex"
-pipelines_api_url = "https://deploykf.example.com:8443/pipeline"
-namespace = "team-1"
+kfp_api_url = "https://deploykf.example.com:8443/pipeline"
+kfp_namespace = "team-1"
 
 # initialize a credentials instance
 credentials = DeployKFCredentialsOutOfBand(
@@ -32,10 +32,10 @@ def patched_kfp_client(verify_ssl=True):
 
 # initialize a client instance
 kfp_client = patched_kfp_client(verify_ssl=not credentials.skip_tls_verify)(
-    host=pipelines_api_url,
+    host=kfp_api_url,
     credentials=credentials,
 )
 
 # test the client by listing experiments
-experiments = kfp_client.list_experiments(namespace=namespace)
+experiments = kfp_client.list_experiments(namespace=kfp_namespace)
 print(experiments)
