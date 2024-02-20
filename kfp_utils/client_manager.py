@@ -1,5 +1,5 @@
 import re
-from urllib.parse import urlsplit
+from urllib.parse import urlsplit, urlencode
 
 import kfp
 import requests
@@ -58,7 +58,19 @@ class KFPClientManager:
         resp = s.get(
             self._api_url, allow_redirects=True, verify=not self._skip_tls_verify
         )
-        if resp.status_code != 200:
+        if resp.status_code == 200:
+            pass
+        elif resp.status_code == 403:
+            # if we get 403, we might be at the oauth2-proxy sign-in page
+            # the default path to start the sign-in flow is `/oauth2/start?rd=<url>`
+            url_obj = urlsplit(resp.url)
+            url_obj = url_obj._replace(
+                path="/oauth2/start", query=urlencode({"rd": url_obj.path})
+            )
+            resp = s.get(
+                url_obj.geturl(), allow_redirects=True, verify=not self._skip_tls_verify
+            )
+        else:
             raise RuntimeError(
                 f"HTTP status code '{resp.status_code}' for GET against: {self._api_url}"
             )
