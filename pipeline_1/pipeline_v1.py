@@ -51,8 +51,8 @@ def main():
     # kfp_client.create_run_from_pipeline_package(
     #     pipeline_file="pipeline_v1.yaml",
     #     arguments={"intro_message": "Hello World!"},
-    #     namespace="team-1-v1",
-    #     experiment_name="test",
+    #     namespace="team-1",
+    #     experiment_name="test-v1",
     # )
 
 
