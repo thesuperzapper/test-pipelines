@@ -1,5 +1,5 @@
-from kfp import dsl, compiler
 from kfp import __version__ as kfp_version
+from kfp import dsl, compiler
 
 #########################################################################################
 # Init
@@ -26,7 +26,12 @@ def step_1(
         f.write(text)
 
 
-@dsl.pipeline(name="pipeline-1", description="pipeline-1 description")
+@dsl.pipeline(
+    name="pipeline-1",
+    # TODO: for some reason the KFP v1 UI will accept this pipeline,
+    #       as long as no description is provided
+    description="pipeline-1 description",
+)
 def pipeline_1(intro_message: str):
     step_1(intro_message=intro_message, text="1\n" * 100)
 
@@ -57,6 +62,8 @@ def main():
     #     arguments={"intro_message": "Hello World!"},
     #     namespace="team-1",
     #     experiment_name="test-v2",
+    #     # NOTE: we disable caching to ensure the pipeline is actually run every time
+    #     enable_caching=False,
     # )
 
 

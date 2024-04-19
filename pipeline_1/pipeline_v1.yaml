@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
   generateName: pipeline-1-
-  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.22, pipelines.kubeflow.org/pipeline_compilation_time: '2023-07-25T00:36:26.082120',
+  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.22, pipelines.kubeflow.org/pipeline_compilation_time: '2024-04-19T10:52:13.894230',
     pipelines.kubeflow.org/pipeline_spec: '{"description": "pipeline_1 description",
       "inputs": [{"name": "intro_message", "type": "String"}], "name": "pipeline_1"}'}
   labels: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.22}
