@@ -16,6 +16,7 @@ if int(kfp_version.split(".")[0]) != 2:
 def step_1(
     intro_message: str,
     # TODO: figure out how to use dsl.InputPath to pass large strings
+    #       https://github.com/kubeflow/pipelines/issues/10378#issuecomment-2067201647
     text: str,
     output_file: dsl.Output[dsl.Artifact],
 ):
