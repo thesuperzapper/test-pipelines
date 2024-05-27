@@ -1,0 +1,82 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: testing-out-metrics-and-their-visualizations-
+  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.22, pipelines.kubeflow.org/pipeline_compilation_time: '2024-05-27T16:21:15.240423',
+    pipelines.kubeflow.org/pipeline_spec: '{"description": "testing out metrics and
+      their visualizations", "name": "testing out metrics and their visualizations"}'}
+  labels: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.22}
+spec:
+  entrypoint: testing-out-metrics-and-their-visualizations
+  templates:
+  - name: markdown-vis
+    container:
+      args: [--mlpipeline-ui-metadata, /tmp/outputs/mlpipeline_ui_metadata/data]
+      command:
+      - sh
+      - -ec
+      - |
+        program_path=$(mktemp)
+        printf "%s" "$0" > "$program_path"
+        python3 -u "$program_path" "$@"
+      - |
+        def _make_parent_dirs_and_return_path(file_path: str):
+            import os
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+            return file_path
+
+        def markdown_vis(mlpipeline_ui_metadata_path):
+            import json
+
+            metadata = {
+                "outputs": [
+                    {
+                        "storage": "inline",
+                        "source": "Inline Markdown - Hello Metrics World",
+                        "type": "markdown",
+                    }
+                ]
+            }
+
+            with open(mlpipeline_ui_metadata_path, "w") as metadata_file:
+                json.dump(metadata, metadata_file)
+
+        import argparse
+        _parser = argparse.ArgumentParser(prog='Markdown vis', description='')
+        _parser.add_argument("--mlpipeline-ui-metadata", dest="mlpipeline_ui_metadata_path", type=_make_parent_dirs_and_return_path, required=True, default=argparse.SUPPRESS)
+        _parsed_args = vars(_parser.parse_args())
+
+        _outputs = markdown_vis(**_parsed_args)
+      image: python:3.10
+    outputs:
+      artifacts:
+      - {name: mlpipeline-ui-metadata, path: /tmp/outputs/mlpipeline_ui_metadata/data}
+    metadata:
+      labels:
+        pipelines.kubeflow.org/kfp_sdk_version: 1.8.22
+        pipelines.kubeflow.org/pipeline-sdk-type: kfp
+        pipelines.kubeflow.org/enable_caching: "true"
+      annotations: {pipelines.kubeflow.org/component_spec: '{"implementation": {"container":
+          {"args": ["--mlpipeline-ui-metadata", {"outputPath": "mlpipeline_ui_metadata"}],
+          "command": ["sh", "-ec", "program_path=$(mktemp)\nprintf \"%s\" \"$0\" >
+          \"$program_path\"\npython3 -u \"$program_path\" \"$@\"\n", "def _make_parent_dirs_and_return_path(file_path:
+          str):\n    import os\n    os.makedirs(os.path.dirname(file_path), exist_ok=True)\n    return
+          file_path\n\ndef markdown_vis(mlpipeline_ui_metadata_path):\n    import
+          json\n\n    metadata = {\n        \"outputs\": [\n            {\n                \"storage\":
+          \"inline\",\n                \"source\": \"Inline Markdown - Hello Metrics
+          World\",\n                \"type\": \"markdown\",\n            }\n        ]\n    }\n\n    with
+          open(mlpipeline_ui_metadata_path, \"w\") as metadata_file:\n        json.dump(metadata,
+          metadata_file)\n\nimport argparse\n_parser = argparse.ArgumentParser(prog=''Markdown
+          vis'', description='''')\n_parser.add_argument(\"--mlpipeline-ui-metadata\",
+          dest=\"mlpipeline_ui_metadata_path\", type=_make_parent_dirs_and_return_path,
+          required=True, default=argparse.SUPPRESS)\n_parsed_args = vars(_parser.parse_args())\n\n_outputs
+          = markdown_vis(**_parsed_args)\n"], "image": "python:3.10"}}, "name": "Markdown
+          vis", "outputs": [{"name": "mlpipeline_ui_metadata"}]}', pipelines.kubeflow.org/component_ref: '{}',
+        pipelines.kubeflow.org/max_cache_staleness: P0D}
+  - name: testing-out-metrics-and-their-visualizations
+    dag:
+      tasks:
+      - {name: markdown-vis, template: markdown-vis}
+  arguments:
+    parameters: []
+  serviceAccountName: pipeline-runner
