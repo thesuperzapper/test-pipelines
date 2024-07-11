@@ -1,0 +1,67 @@
+# PIPELINE DEFINITION
+# Name: pipeline-1
+# Description: pipeline-1 description
+# Inputs:
+#    intro_message: str
+components:
+  comp-step-1:
+    executorLabel: exec-step-1
+    outputDefinitions:
+      artifacts:
+        test_path:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+deploymentSpec:
+  executors:
+    exec-step-1:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - step_1
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location 'kfp==2.5.0'\
+          \ '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"' && \"\
+          $0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef step_1(test_path: Output[Dataset]):\n    import torch\n\n   \
+          \ from torchvision.transforms import ToTensor\n    from torchvision.datasets\
+          \ import MNIST\n\n    mnist_test = MNIST(\".\", download=True, train=False,\
+          \ transform=ToTensor())\n\n    with open(test_path.path, \"wb\") as f:\n\
+          \        torch.save(mnist_test, f)\n\n"
+        image: kubeflownotebookswg/jupyter-pytorch:v1.9.0-rc.0
+pipelineInfo:
+  description: pipeline-1 description
+  name: pipeline-1
+root:
+  dag:
+    tasks:
+      step-1:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-step-1
+        taskInfo:
+          name: step-1
+  inputDefinitions:
+    parameters:
+      intro_message:
+        parameterType: STRING
+schemaVersion: 2.1.0
+sdkVersion: kfp-2.5.0
